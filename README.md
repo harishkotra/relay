@@ -2,7 +2,9 @@
 
 **The same agent, implemented twice, running side by side.**
 
-Built by [Harish Kotra](https://harishkotra.me) · [Checkout my other builds](https://dailybuild.xyz)
+<img width="1550" height="2943" alt="screencapture-127-0-0-1-5173-2026-10-11-07_21_16" src="https://github.com/user-attachments/assets/2b0a6523-984a-49c2-9680-d01c66273119" />
+
+https://github.com/user-attachments/assets/637224aa-1f8e-4b4c-9d04-67334ce5a07a
 
 `relay` is a demo you can disprove on screen. One agent — three tools, one system prompt, one turn
 budget — is implemented two ways:
@@ -227,7 +229,3 @@ Small, in-scope ideas:
 
 Deliberately out of scope: auth, a database, deployment, streaming token-by-token rendering, and any
 second agent framework. This is a two-implementation comparison and stops there.
-
----
-
-Built by [Harish Kotra](https://harishkotra.me) · [Checkout my other builds](https://dailybuild.xyz)
