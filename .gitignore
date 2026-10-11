@@ -19,3 +19,6 @@ dist/
 .vscode/
 .idea/
 .DS_Store
+
+# ship drafts stay local: never pushed to GitHub
+docs/ship/

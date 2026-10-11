@@ -13,6 +13,7 @@
     "typecheck": "tsc -p tsconfig.server.json --noEmit && tsc -p tsconfig.client.json --noEmit",
     "check": "tsx --env-file-if-exists=.env scripts/check.ts",
     "verify": "tsx --env-file-if-exists=.env scripts/verify.ts",
+    "stub": "tsx scripts/stub-provider.ts",
     "loc": "tsx scripts/loc.ts"
   },
   "engines": {

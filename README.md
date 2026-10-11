@@ -117,7 +117,7 @@ Two honest caveats, both visible in the UI:
 2. **Path B's number has two readings.** `strands.ts` is the agent. `strands-trace.ts` exists only so
    the framework path can emit the same trace format the demo compares against; Path A needs no
    equivalent file because its loop emits those steps as a side effect of existing. The UI shows
-   `24 (+143 trace bridge)` rather than picking the flattering one. If you only want the
+   `24 (+147 trace bridge)` rather than picking the flattering one. If you only want the
    "delete the loop" headline, the 24-line file is real — and so is the bridge.
 
 ## <a name="divergence-is-the-point"></a>Divergence is the point
@@ -132,6 +132,34 @@ differences show up even when both paths get the right answer:
 - **what a failure looks like.** Path A throws on a non-2xx and surfaces the raw upstream body;
   Strands classifies it (`ModelError`, `ModelThrottledError`, …) and may retry throttling before it
   re-raises.
+
+## Finding: parallel tool calls diverge (found with the stub, `@strands-agents/sdk` 1.20.0)
+
+`npm run stub` starts a scripted OpenAI-compatible provider that answers with **two `tool_calls` in
+one assistant turn** — which is exactly what a model does for task 1 ("what is 1873 * 42, *and* what
+time is it?"). Against that stream:
+
+| | Path A | Path B |
+| --- | --- | --- |
+| tool calls executed | 2 (`calculator` + `now_utc`) | 1 (`now_utc` only) |
+| answer | computed value **and** the time | the time |
+
+This is not a fixture artifact and not a model-quality issue. The OpenAI chat adapter emits a
+`toolUseStart` per `tool_calls[]` entry but only emits content-block *stops* when `finish_reason`
+arrives (`models/openai/chat-adapter.js:370`), while the shared stream assembler holds one scalar
+`toolName` / `toolUseId` / `accumulatedToolInput` slot and resets it on every block start
+(`models/model.js:199-209`). The second start therefore overwrites the first, and the first call
+never reaches the tool executor.
+
+**Where the boundary is:** one tool call per turn is fine. Both paths were confirmed identical on the
+fetch task (2 model calls, 1 tool) and the fetch-then-sum task (3 model calls, 2 tools, same computed
+result). Only *parallel* calls inside a single streamed turn are affected.
+
+**What I deliberately did not do:** the shared system prompt still says "one expression per call"
+and nothing about calling one tool at a time. Adding "make at most one tool call per turn" would
+paper over the framework's limitation by changing the rules both paths play by, which defeats the
+point of the build. If your model emits tools one at a time you will never see this; if it batches
+them, Path B will quietly do less work than Path A.
 
 ## Verification
 
