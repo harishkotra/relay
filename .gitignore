@@ -1,0 +1,21 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+*.tsbuildinfo
+
+# secrets -- the app is designed to take keys from the browser, not from git
+.env
+.env.*
+!.env.example
+
+# runtime state
+.data/
+*.log
+.sst/
+
+# editors and OS
+.vscode/
+.idea/
+.DS_Store
